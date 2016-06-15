@@ -1,0 +1,56 @@
+
+##概述
+
+
+Android编译系统集中于build/core下，几个很重要的*.mk文件如下：
+
+         main.mk(主控Makefile)
+
+         base_rules.mk(对一些Makefile的变量规则化)
+
+         config.mk（关于编译参数、编译命令的一些配置）
+
+         definations.mk（定义了很多编译系统中用到的宏，相当于函数库）
+
+         Makefile（这个Makefile特指build/core下的Makefile，此文件主要控制生成system.img,ramdisk.img,userdata.img,以及recorvery image，sdk等）
+
+         Binary.mk(控制如何生成目标文件)
+
+         Clear_vars.mk（清除编译系统中用到的临时变量）
+
+         Combo/linux-arm.mk(控制如何生成linux-arm二进制文件，包括ARM相关的编译器，编译参数等的设置)
+
+         Copy_headers.mk（将头文件拷贝到指定目录）
+
+         分散于各个目录下的Android.mk(控制生成局部模块的源码，名称所需头文件路径，依赖库等特殊选项)
+
+         Build/envsetup.mk(编译环境初始化，定义一些实用的shell函数，方便编译使用)
+
+         以上几个主要的文件，可以按照社会分工打一个比方：
+
+         Main.mk是总统，是老大，承担了很多工作。
+
+         Makefile是副总统，辅佐老大Main.mk
+
+         Base_rules.mk是交警，让不规则的东西，变得规则。
+
+         Config.mk是省长，规定了各个人民群众该如何行事
+
+         Definations.mk是图书馆管理员
+
+         Binary.mk应该属于村长了，规定每个人该如何行事
+
+         Clear_vars.mk应该属于保洁公司的工人吧
+         Combo/linux-arm.mk应该属于社会公民了，他决定自己该如何去做
+
+##Makefile包含关系
+
+Makefile->main.mk->config.mk->pathmap.mk
+                            ->envsetup.mk
+                            ->combo/select.mk
+                            ->dumpvar.mk
+                  ->definitions.mk->distdir.mk
+                  ->dex_preopt.mk
+                  ->$(subdir_makefiles) // find leaves all the Android.mk
+                  ->Makefile
+                  ->legacy_prebuilts.mk
