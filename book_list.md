@@ -1,5 +1,9 @@
 ##《Android系统源代码情况分析》
 
+#makefile
+
+《GNU make中文手册》
+
 ##  语言：
 
 《深度探索C++对象模型》，对应的英文版是《Inside C+++ Object Model》

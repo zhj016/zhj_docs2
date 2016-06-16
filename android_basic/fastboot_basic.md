@@ -27,6 +27,8 @@ fastboot erase cache
 上面的命令也可以简化成一条命令
 fastboot erase system -w
 
+fastbppt erase -w
+
 ###fastboot reboot
 
 ###fastboot getvar <variable>   display a bootloader variable  
@@ -55,6 +57,3 @@ secure              返回yes 表示在刷机时需要获取签名
 （1）创建包含boot.img，system.img，recovery.img文件的zip包。
 
    （2）执行：fastboot update {*.zip}
-
-
-   
