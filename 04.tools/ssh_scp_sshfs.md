@@ -43,3 +43,7 @@
 
   sshfs zhaohj0612@192.168.65.18:/home/zhaohj0612 nj08_home
   funermount -u nj08_home
+
++ nj16
+   sshfs tangjj1112@192.168.65.26:/home/tangjj1112 nj16_home
+   funermount -u nj16_home
