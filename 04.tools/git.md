@@ -1,5 +1,7 @@
-#git memo
+#git  tig memo
 
+
+##tig related
 ##看修改记录
 
   tig
@@ -11,7 +13,37 @@
 
 gitk 图形话工具
 
+###show
+tig show --pretty=fuller
 
+git show | tig
+
+
+###view switch
+
+
+
+Key	Action
+m	Switch to main view.
+
+d	Switch to diff view.
+
+l	Switch to log view.
+
+g	Switch to grep view.
+
+b	Switch to blame view.
+
+s	Switch to status view
+
+c   Switch to stage view
+
+### folder
+
+tig <folder or file name>
+
+
+#git related
 ##统计
 
 git log --stat
