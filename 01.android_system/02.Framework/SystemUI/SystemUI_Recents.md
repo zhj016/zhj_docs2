@@ -2,6 +2,7 @@
 
 
 ##KeyEvent.java中对于Switch按键的定义：
+
     /** Key code constant: App switch key.
      * Should bring up the application switcher dialog. */
     public static final int KEYCODE_APP_SWITCH      = 187;
@@ -10,8 +11,6 @@
 
 在KeyEvent出队列时，会走到interceptKeyBeforeDispatching函数，因此对于KEYCODE_APP_SWITCH的处理，会在这里进行。
 
-
-	
 	 /** {@inheritDoc} */
 	    @Override
 	    public long interceptKeyBeforeDispatching(WindowState win, KeyEvent event, int policyFlags) {

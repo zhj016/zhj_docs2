@@ -15,55 +15,64 @@ StatusBar继承于SystemUI，在SystemUIApplication会启动SystemBar.
 	mServices[i].start();
 
 SystemBars.java
-	
-	@Override  
-	   public void start() {  
-	       if (DEBUG) Log.d(TAG, "start");  
-	       mServiceMonitor = new ServiceMonitor(TAG, DEBUG,  
-	               mContext, Settings.Secure.BAR_SERVICE_COMPONENT, this);  
-	       mServiceMonitor.start();  // will call onNoService if no remote service is found  
-	   } 
+
+			    @Override
+		48    public void start() {
+		49        if (DEBUG) Log.d(TAG, "start");
+		50        mServiceMonitor = new ServiceMonitor(TAG, DEBUG,
+		51                mContext, Settings.Secure.BAR_SERVICE_COMPONENT, this);
+		52        mServiceMonitor.start();  // will call onNoService if no remote service is found
+		53    }
+		54
 	   
 在start函数会实例化ServiceMonitor以及start ServieMonitor。
 
-ServiceMonitor.java	   
-	   
-		public void start() {  
-	      // listen for setting changes  
-	      ContentResolver cr = mContext.getContentResolver();  
-	      cr.registerContentObserver(Settings.Secure.getUriFor(mSettingKey),  
-	              false /*notifyForDescendents*/, mSettingObserver, UserHandle.USER_ALL);  
-	  
-	      // listen for package/component changes  
-	      IntentFilter filter = new IntentFilter();  
-	      filter.addAction(Intent.ACTION_PACKAGE_ADDED);  
-	      filter.addAction(Intent.ACTION_PACKAGE_CHANGED);  
-	      filter.addAction(Intent.ACTION_PACKAGE_REMOVED);  
-	      filter.addDataScheme("package");  
-	      mContext.registerReceiver(mBroadcastReceiver, filter);  
-	  
-	      mHandler.sendEmptyMessage(MSG_START_SERVICE);  
-	  }  
+其中：
+	
+	5593        /** @hide */
+	5594        public static final String BAR_SERVICE_COMPONENT = "bar_service_component";
 
+ServiceMonitor.java	   
+			   
+		170    public void start() {
+		171        // listen for setting changes
+		172        ContentResolver cr = mContext.getContentResolver();
+		173        cr.registerContentObserver(Settings.Secure.getUriFor(mSettingKey),
+		174                false /*notifyForDescendents*/, mSettingObserver, UserHandle.USER_ALL);
+		175
+		176        // listen for package/component changes
+		177        IntentFilter filter = new IntentFilter();
+		178        filter.addAction(Intent.ACTION_PACKAGE_ADDED);
+		179        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
+		180        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+		181        filter.addDataScheme("package");
+		182        mContext.registerReceiver(mBroadcastReceiver, filter);
+		183
+		184        mHandler.sendEmptyMessage(MSG_START_SERVICE);
+		185    }
 
 这个函数主要做两件事情：
 
 + 监听apk的安装卸载，即apk变化事件
 + 发送MSG_START_SERVICE，启动service
 
+
+
+
 ServiceMonitor.java
-	
-	private void startService() {  
-	       mServiceName = getComponentNameFromSetting();  
-	       if (mDebug) Log.d(mTag, "startService mServiceName=" + mServiceName);  
-	       if (mServiceName == null) {  
-	           mBound = false;  
-	           mCallbacks.onNoService();  
-	       } else {  
-	           long delay = mCallbacks.onServiceStartAttempt();  
-	           mHandler.sendEmptyMessageDelayed(MSG_CONTINUE_START_SERVICE, delay);  
-	       }  
-	   }  
+
+			225    private void startService() {
+		226        mServiceName = getComponentNameFromSetting();
+		227        if (mDebug) Log.d(mTag, "startService mServiceName=" + mServiceName);
+		228        if (mServiceName == null) {
+		229            mBound = false;
+		230            mCallbacks.onNoService();
+		231        } else {
+		232            long delay = mCallbacks.onServiceStartAttempt();
+		233            mHandler.sendEmptyMessageDelayed(MSG_CONTINUE_START_SERVICE, delay);
+		234        }
+		235    }
+		236
 
 当ServiceName为NULL时，会call到callbacks的onNoService函数。
 
@@ -86,31 +95,30 @@ SystemBars.java
 
 
 createStatusBarFromConfig函数实现：
-		
-		private void createStatusBarFromConfig() {  
-		       if (DEBUG) Log.d(TAG, "createStatusBarFromConfig");  
-		       final String clsName = mContext.getString(R.string.config_statusBarComponent);  
-		       if (clsName == null || clsName.length() == 0) {  
-		           throw andLog("No status bar component configured", null);  
-		       }  
-		       Class<?> cls = null;  
-		       try {  
-		           cls = mContext.getClassLoader().loadClass(clsName);  
-		       } catch (Throwable t) {  
-		           throw andLog("Error loading status bar component: " + clsName, t);  
-		       }  
-		       try {  
-		           mStatusBar = (BaseStatusBar) cls.newInstance();  
-		       } catch (Throwable t) {  
-		           throw andLog("Error creating status bar component: " + clsName, t);  
-		       }  
-		       mStatusBar.mContext = mContext;  
-		       mStatusBar.mComponents = mComponents;  
-		       mStatusBar.start();  
-		       if (DEBUG) Log.d(TAG, "started " + mStatusBar.getClass().getSimpleName());  
-		   }  
-		   
-		   
+				
+		87    private void createStatusBarFromConfig() {
+		88        if (DEBUG) Log.d(TAG, "createStatusBarFromConfig");
+		89        final String clsName = mContext.getString(R.string.config_statusBarComponent);
+		90        if (clsName == null || clsName.length() == 0) {
+		91            throw andLog("No status bar component configured", null);
+		92        }
+		93        Class<?> cls = null;
+		94        try {
+		95            cls = mContext.getClassLoader().loadClass(clsName);
+		96        } catch (Throwable t) {
+		97            throw andLog("Error loading status bar component: " + clsName, t);
+		98        }
+		99        try {
+		100            mStatusBar = (BaseStatusBar) cls.newInstance();
+		101        } catch (Throwable t) {
+		102            throw andLog("Error creating status bar component: " + clsName, t);
+		103        }
+		104        mStatusBar.mContext = mContext;
+		105        mStatusBar.mComponents = mComponents;
+		106        mStatusBar.start();
+		107        if (DEBUG) Log.d(TAG, "started " + mStatusBar.getClass().getSimpleName());
+		108    }
+		109		   
 		   
 会call到BaseStatusBar的start函数
 	
