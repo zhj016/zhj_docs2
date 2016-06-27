@@ -1,4 +1,4 @@
-#有用的命令
+#有用的命令 eventsetup
 
 USER-NAME@MACHINE-NAME:~/Android$ .  ./build/envsetup.sh
 
@@ -12,3 +12,9 @@ USER-NAME@MACHINE-NAME:~/Android$ .  ./build/envsetup.sh
       - jgrep: Greps on all local Java files.
       - resgrep: Greps on all local res/*.xml files.
       - godir: Go to the directory containing a file.
+
+##hierarchyviewer
+
+
+我们通过hierarchyviewer这个工具来查看一下系统启动后的布局情况
+(注：hierarchyviewer在SDK/tools目录下，在windows环境下直接运行hierarchyviewer.bat，linux环境下终端执行./hierarchyviewer；
