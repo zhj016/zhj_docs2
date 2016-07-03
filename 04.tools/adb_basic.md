@@ -40,11 +40,15 @@
 
 ### 指定buffer
 
+默认 main system
+
     adb logcat -b main
     adb logcat -b system
     adb logcat -b radio
     adb logcat -b events
 
+
+adb logcat -b crashes   // only see crashes
 
 ### 指定手机上的文件
 

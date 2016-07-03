@@ -10,6 +10,8 @@
 
   与vi命令一致
 
+   tig dir //check history of one folder
+
 
 gitk 图形话工具
 
