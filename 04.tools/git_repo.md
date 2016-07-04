@@ -21,6 +21,10 @@ tig show --pretty=fuller
 git show | tig
 
 
+## git diff
+
+git diff branch1..branch2 --filename
+
 ###view switch
 
 
@@ -142,3 +146,28 @@ $ git config --global alias.last 'log -1 HEAD'
 git merge
 git rebase
 get cherry-pick
+
+## diff
+
+git diff branch1..branch2 --filename
+
+#repo
+repo forall -c ""
+
+##下载
+git clone git://code.thundersoft.com/tools/repo –b stable
+
+##使用repo下载整个Android代码树
+
+repo init -u manifest库的地址 -b 分支名
+
+##建立本地的工作分支
+
+
+repo start <branch_name> {<git库名(可多个) | --all}
+
+
+##grep
+
+repo grep {pattern | -e pattern} [<project>...]
+在指定或所有库中查找关键字
