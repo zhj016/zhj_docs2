@@ -171,3 +171,11 @@ repo start <branch_name> {<git库名(可多个) | --all}
 
 repo grep {pattern | -e pattern} [<project>...]
 在指定或所有库中查找关键字
+
+
+##git hub ssh key permission issue
+
+    git remote rm origin
+    git remote add origin https://github.com/zhj016/zhj_docs2.git
+    git push -u origin master
+    input user name and password
