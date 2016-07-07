@@ -26,6 +26,10 @@
                 -g 查看缓冲区信息
                 -t 10 // 输出最近10行后退出
 
+####指定级别
+
+    adb logcat *:V 
+
 #### tag 过滤
 
     adb logcat -s system.out

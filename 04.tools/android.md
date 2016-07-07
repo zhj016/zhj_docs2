@@ -38,3 +38,8 @@ sudo apt-get install git-core gnupg flex bison gperf build-essential \
   python-markdown libxml2-utils xsltproc zlib1g-dev:i386
 
 sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so
+
+
+##cpu 内核数
+
+cat /proc/cpuinfo
