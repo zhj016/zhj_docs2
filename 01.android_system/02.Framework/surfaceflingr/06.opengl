@@ -1,0 +1,23 @@
+#使用opengl绘图
+
+
+##例子位置
+
+/frameworks/native/opengl/tests
+
+##背景透明
+
+    sp<SurfaceControl> sc = surfaceComposerClient->createSurface(
+            String8("Benchmark"), width, height,
+            PIXEL_FORMAT_RGBX_8888, ISurfaceComposerClient::eOpaque);
+
+
+改为
+
+    sp<SurfaceControl> sc = surfaceComposerClient->createSurface(
+            String8("Benchmark"), width, height,
+            PIXEL_FORMAT_RGBX_8888, 0);
+
+##多线程
+
+目前不支持跨线程，初始化工作在同一个线程里面做。
