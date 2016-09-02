@@ -36,7 +36,7 @@ When using application-level tracing with Systrace, you must specify the package
 
 ##collect result
 
-  python systrace.py --time=5 sched gfx view wm input freq -o /home/holiang/Trace/trace005.html -a com.test.trace
+  python systrace.py --time=5 sched gfx view wm input freq -o /home/holiang/Trace/trace005.html -a com.android.launcher3
 
 
 
