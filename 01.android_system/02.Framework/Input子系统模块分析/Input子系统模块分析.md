@@ -1,4 +1,4 @@
-#Android Input 子系统模块分析以及Qcom Latency项目总结
+#Android Input 子系统模块分析
 > 对应代码 Android 6.0
 
 **Revision History**
@@ -473,25 +473,16 @@ InputDispatcher也是一个线程，会不断循环调用dispatchOnce. 在dispat
         void InputDispatcher::dispatchOnce() {
             nsecs_t nextWakeupTime = LONG_LONG_MAX;
             { // acquire lock
-                AutoMutex _l(mLock);
-                mDispatcherIsAliveCondition.broadcast();
-
-                // Run a dispatch loop if there are no pending commands.
-                // The dispatch loop might enqueue commands to run afterwards.
+                ......
                 if (!haveCommandsLocked()) {
-                    dispatchOnceInnerLocked(&nextWakeupTime);
+                    dispatchOnceInnerLocked(&nextWakeupTime);//发送
                 }
 
-                // Run all pending commands if there are any.
-                // If any commands were run then force the next poll to wake up immediately.
-                if (runCommandsLockedInterruptible()) {
+                if (runCommandsLockedInterruptible()) {//执行相关回调到framework
                     nextWakeupTime = LONG_LONG_MIN;
                 }
             } // release lock
-
-            // Wait for callback or timeout or wake.  (make sure we round up, not down)
-            nsecs_t currentTime = now();
-            int timeoutMillis = toMillisecondTimeoutDelay(currentTime, nextWakeupTime);
+			......
             mLooper->pollOnce(timeoutMillis);
         }
 
@@ -501,22 +492,17 @@ InputDispatcher也是一个线程，会不断循环调用dispatchOnce. 在dispat
         // Identify targets.
         Vector<InputTarget> inputTargets;
         int32_t injectionResult = findFocusedWindowTargetsLocked(currentTime,
-                entry, inputTargets, nextWakeupTime);
+                entry, inputTargets, nextWakeupTime);//找到目标
         if (injectionResult == INPUT_EVENT_INJECTION_PENDING) {
             return false;
         }
-
-        setInjectionResultLocked(entry, injectionResult);
-        if (injectionResult != INPUT_EVENT_INJECTION_SUCCEEDED) {
-            return true;
-        }
-
-        addMonitoringTargetsLocked(inputTargets);
-
+		......
         // Dispatch the key.
-        dispatchEventLocked(currentTime, entry, inputTargets);
+        dispatchEventLocked(currentTime, entry, inputTargets);//发送entry到Target
 
-它会找到目标窗口，然后通过之前和App间建立的连接发送事件。如果是个需要系统处理的Key事件，这里会封装成CommandEntry插入到mCommandQueue队列中，后面的runCommandLockedInterruptible()函数中会调用doInterceptKeyBeforeDispatchingLockedInterruptible()来让PWM有机会进行处理。最后dispatchOnce()调用pollOnce()从和App的连接上接收处理完成消息。
+它会找到目标窗口，然后通过之前和App间建立的连接发送事件。
+
+如果是个需要系统处理的Key事件，这里会封装成CommandEntry插入到mCommandQueue队列中，后面的runCommandLockedInterruptible()函数中会调用doInterceptKeyBeforeDispatchingLockedInterruptible()来让PWM有机会进行处理。最后dispatchOnce()调用pollOnce()从和App的连接上接收处理完成消息。
 
 
 发送事件的位置
@@ -532,7 +518,7 @@ InputTarget描述事件发送的对象，其中包括InputChannel
 
 Connection 有几个重要的成员
 
-        sp<InputChannel> inputChannel; // never null
+        sp<InputChannel> inputChannel; // 传输通道
         InputPublisher inputPublisher; //封装将事件通过inputChannel发送的逻辑
         Queue<DispatchEntry> outboundQueue;//存放所有要发布给这个channel的输入事件。
 
@@ -753,7 +739,7 @@ APP侧处理输入事件的基本流程：
 ###3.4 按键预处理
 
 
-####3.4.1 before dispatch
+####3.4.1 发送给应用之前的预处理
 
 在dispatchKeyLocked中有下面的逻辑
 
@@ -778,7 +764,7 @@ APP侧处理输入事件的基本流程：
             }
         }
 
-
+doInterceptKeyBeforeDispatchingLockedInterruptible 的实现
 
         void InputDispatcher::doInterceptKeyBeforeDispatchingLockedInterruptible(
                 CommandEntry* commandEntry) {
@@ -864,7 +850,7 @@ APP侧处理输入事件的基本流程：
     }
 
 
-####3.4.2 interceptKeyBeforeQueueing
+####3.4.2 加入InputDispatch队列之前的预处理，interceptKeyBeforeQueueing
 
 InputReader将按键事件发送给InputDispatcher是通过InputListener接口的notifyKey函数。通过这个接口，把 按键加入到InputDispatcher的队列中。在加入队列之前，会调用PhoneWindowManager的interceptKeyBeforeQueueing。
 
@@ -896,3 +882,6 @@ InputReader将按键事件发送给InputDispatcher是通过InputListener接口�
         return mService.mPolicy.interceptKeyBeforeQueueing(event, policyFlags);
     }
 
+##4. 小结
+
+本文分析了Android 6.0输入子系统的实现细节，包含了EventHub, InputReader,InputDispatcher等基本模块和流程分析。同时还分析了应用和输入子系统的联系建立过程，ViewRootImpl如何接收和处理输入事件，framework层对事件的预处理，Vsync机制对触屏事件的影响等问题。
